@@ -29,6 +29,7 @@ impl eframe::App for MyApp {
 
         Window::new("Window 2").show(ctx, |ui| {
             for numberVec in &self.numbers {
+                ui.label("Register: ");
                 ui.horizontal(|ui| {
                     for &number in numberVec {
                         ui.vertical(|ui| {
@@ -62,8 +63,6 @@ impl MyApp {
         let tmp = self.numbers[vec1][index1];
         self.numbers[vec1][index1] = self.numbers[vec2][index2];
         self.numbers[vec2][index2] = tmp;
-        // swap animation
-        //
     }
 }
 
