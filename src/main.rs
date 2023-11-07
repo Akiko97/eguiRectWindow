@@ -3,14 +3,16 @@
 use eframe::egui::{self, CentralPanel, Window};
 
 struct MyApp {
-    numbers: Vec<u32>,
+    numbers: Vec<Vec<u32>>,
 }
 
 impl Default for MyApp {
     fn default() -> Self {
         Self {
-            // 假设我们有一个包含五个数字的数组
-            numbers: vec![10, 20, 30, 40, 50],
+            numbers: vec![
+                vec![10, 20, 30, 40, 50],
+                vec![50, 40, 30, 20, 10],
+            ],
         }
     }
 }
@@ -26,26 +28,28 @@ impl eframe::App for MyApp {
         });
 
         Window::new("Window 2").show(ctx, |ui| {
-            ui.horizontal(|ui| {
-                for &number in &self.numbers {
-                    ui.vertical(|ui| {
-                        let text = format!("{}", number);
-                        let size = egui::vec2(50.0, 25.0);
-                        let (rect, _response) = ui.allocate_exact_size(size, egui::Sense::hover());
-                        if ui.is_rect_visible(rect) {
-                            ui.painter().rect_filled(rect, 0.0, egui::Color32::LIGHT_BLUE);
-                            let galley = ui.painter().layout_no_wrap(text.clone(), egui::FontId::new(20f32, egui::FontFamily::Monospace), egui::Color32::BLACK);
-                            let text_pos = rect.center() - galley.size() / 2.0;
-                            ui.painter().galley(text_pos, galley);
-                        }
-                    });
-                }
-            });
+            for numberVec in &self.numbers {
+                ui.horizontal(|ui| {
+                    for &number in numberVec {
+                        ui.vertical(|ui| {
+                            let text = format!("{}", number);
+                            let size = egui::vec2(50.0, 25.0);
+                            let (rect, _response) = ui.allocate_exact_size(size, egui::Sense::hover());
+                            if ui.is_rect_visible(rect) {
+                                ui.painter().rect_filled(rect, 0.0, egui::Color32::LIGHT_BLUE);
+                                let galley = ui.painter().layout_no_wrap(text.clone(), egui::FontId::new(20f32, egui::FontFamily::Monospace), egui::Color32::BLACK);
+                                let text_pos = rect.center() - galley.size() / 2.0;
+                                ui.painter().galley(text_pos, galley);
+                            }
+                        });
+                    }
+                });
+            }
         });
 
         Window::new("Window 3").show(ctx, |ui| {
             if ui.button("Swap").clicked() {
-                self.swap(0, 1);
+                self.swap(0, 0, 1, 1);
                 ctx.request_repaint();
             }
         });
@@ -53,8 +57,13 @@ impl eframe::App for MyApp {
 }
 
 impl MyApp {
-    fn swap(&mut self, f: usize, s: usize) {
-        self.numbers.swap(f, s);
+    fn swap(&mut self, vec1: usize, index1: usize, vec2: usize, index2: usize) {
+        // swap data
+        let tmp = self.numbers[vec1][index1];
+        self.numbers[vec1][index1] = self.numbers[vec2][index2];
+        self.numbers[vec2][index2] = tmp;
+        // swap animation
+        //
     }
 }
 
